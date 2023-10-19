@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      height: 100vh;
+    }
+
+    .road {
+      width: 520px;
+      height: 100vh;
+      border: 2px solid;
+      background-image: url(road\ -\ Copy.jpg);
+      background-size: cover;
+      background-repeat: repeat-y;
+      background-position: 50% 50%;
+      animation: roadmove 4s infinite linear;
+      position: relative;
+    }
+
+    @keyframes roadmove {
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 0 100vh;
+      }
+    }
+
+    #car {
+      width: 50px;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .obstacle {
+      width: 30px;
+      height: 30px;
+      background-color: rgb(157, 8, 8);
+      position: absolute;
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      color: white;
+      background-color: #dba934;
+    }
+
+    #level {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: white;
+      background-color: #dba934;
+    }
+
+    #game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      text-align: center;
+    }
+
+    #game-over h2 {
+      color: white;
+      font-size: 24px;
+    }
+
+    #restart-button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .blocksheeld{
+        width: 450px;
+      height: 100vh;
+      border: 2px solid;
+    }
+    #Quait{
+        position: absolute;
+      top: 10px;
+      right: 200px;
+      font-size: 24px;
+      background-color: #dba934;
+      color: #ffffff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body background="bac1.png">
+    <div class="blocksheeld">
+  <div class="road">
+    <img src="102.png" alt="" id="car">
+    <div id="score">Score: 0</div>
+    <div id="level">Level: 1</div>
+    <a href="start.html" ><button id="Quait">Quait</button></a>
+  </div>
+  <div id="game-over">
+    <h2>Game Over!</h2>
+    <p>Your score: <span id="final-score">0</span></p>
+    <button id="restart-button">Restart</button>
+  </div>
+</div>
+  <script>
+var move = 5; // Decrease the move value to slow down the car's movement
+var obstacleMove = 3; // Decrease the obstacle's move value to slow down its movement
+var car = document.getElementById("car");
+var score = 0;
+var level = 1;
+var gameInProgress = true;
+var obstacleIntervalMs = 3000; // Increase this value to slow down obstacle creation (in milliseconds)
+
+function createObstacle() {
+  var obstacle = document.createElement("div");
+  obstacle.className = "obstacle";
+  obstacle.style.left = Math.floor(Math.random() * 400) + "px"; // Randomize obstacle position
+  document.querySelector(".road").appendChild(obstacle);
+
+  // Animate the obstacle's movement
+  var obstacleInterval = setInterval(function () {
+    if (!gameInProgress) {
+      clearInterval(obstacleInterval);
+      return;
+    }
+
+    var obstacles = document.querySelectorAll(".obstacle");
+    if (obstacles.length > 0) {
+      obstacles.forEach(function (obstacle) {
+        var obstacleTop = parseInt(obstacle.style.top) || 0;
+        obstacle.style.top = obstacleTop + obstacleMove + "px"; // Decrease obstacle movement speed
+
+        // Check for collision
+        var carRect = car.getBoundingClientRect();
+        var obstacleRect = obstacle.getBoundingClientRect();
+        if (
+          carRect.left < obstacleRect.right &&
+          carRect.right > obstacleRect.left &&
+          carRect.top < obstacleRect.bottom &&
+          carRect.bottom > obstacleRect.top
+        ) {
+          gameInProgress = false;
+          document.getElementById("final-score").textContent = score;
+          document.getElementById("game-over").style.display = "block";
+        }
+
+        // Remove obstacles that go out of the road
+        if (obstacleTop > window.innerHeight) {
+          obstacle.remove();
+          createObstacle(); // Create a new obstacle when one goes off the road
+
+          // Increment score only if the game is still in progress
+          if (gameInProgress) {
+            score += 10;
+            document.getElementById("score").textContent = "Score: " + score;
+
+            // Check for level completion
+            if (score >= 100 * level) {
+              level += 1;
+              document.getElementById("level").textContent = "Level: " + level;
+              alert("Congratulations! You completed level " + (level - 1)); // Display a congratulatory alert
+            }
+          }
+        }
+      });
+    }
+  }, 50);
+}
+
+window.onload = () => {
+  car.style.position = "absolute";
+  car.style.bottom = "0";
+  car.style.left = "50%";
+  car.style.transform = "translateX(-50%)";
+  createObstacle(); // Start spawning obstacles
+};
+
+window.onkeydown = (e) => {
+  if (!gameInProgress) return;
+
+  switch (e.key.toLowerCase()) { // Convert to lowercase for case-insensitive comparison
+    case "arrowup":
+      car.style.top = parseInt(car.style.top) - move + "px";
+      break;
+    case "arrowdown":
+      car.style.top = parseInt(car.style.top) + move + "px";
+      break;
+    case "arrowleft":
+      car.style.left = parseInt(car.style.left) - move + "px";
+      break;
+    case "arrowright":
+      car.style.left = parseInt(car.style.left) + move + "px";
+      break;
+  }
+};
+
+// Restart the game when the restart button is clicked
+document.getElementById("restart-button").addEventListener("click", () => {
+  document.getElementById("game-over").style.display = "none";
+  car.style.top = "0";
+  car.style.left = "50%";
+  car.style.transform = "translateX(-50%)";
+  score = 0;
+  level = 1;
+  document.getElementById("score").textContent = "Score: 0";
+  document.getElementById("level").textContent = "Level: 1";
+  gameInProgress = true;
+  createObstacle();
+});
+
+
+  </script>
+</body>
+</html>

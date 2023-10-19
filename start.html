@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+           
+        }
+
+        body {
+            display: grid;
+            height:200px;
+            gap: 20px;
+        }
+
+        .box {
+            width: 220px;
+            height: 350px;
+            background-color: rgb(158, 164, 164);
+            align-content: center;
+            padding: 5px;
+            border: 2px solid;
+        }
+
+        h1 {
+            background-color: rgb(224, 172, 0);
+            width: 220px;
+            height: auto;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            color: #fff;
+        }
+
+        .car {
+            width: 180px;
+            border: 0cap;
+            display: grid;
+            
+        }
+
+        button {
+            width: 220px;
+            background-color: rgb(224, 172, 0);
+
+        }
+        #playbutton{
+            margin: auto;
+            cursor: pointer;
+            
+        }
+    </style>
+</head>
+
+<body background="garaj.jpg">
+   <a href="index.html"><h1>Game</h1></a>
+    <div class="box">
+        <img src="police car.png" alt="" class="car" id="car1">
+        <img src="101.png" alt="" id="car2" class="car">
+        <img src="01.png" alt="" id="car3" class="car">
+        <img src="102.png" alt="" id="imgCar4" class="car">
+        
+    </div>
+    <button onclick="car()" id="idButtun">Next</button>
+<a id="playbutton" href="home.html"><button >Play game</button></a>
+
+    <script>
+        const idButton = document.getElementById("idButtun");
+        const imgCar1 = document.getElementById("car1");
+        const imgCar2 = document.getElementById("car2");
+        const imgCar3 = document.getElementById("car3");
+        const imgCar4 = document.getElementById("car4");
+    
+        let currentCar = 1; // Initialize the current car image
+    
+        idButton.addEventListener("click", function() {
+            // Hide the currently displayed car
+            switch (currentCar) {
+                case 1:
+                    imgCar1.style.display = "none";
+                    break;
+                case 2:
+                    imgCar2.style.display = "none";
+                    break;
+                case 3:
+                    imgCar3.style.display = "none";
+                    break;
+                case 4:
+                    imgCar4.style.display = "none";
+                    break;
+            }
+    
+            // Increment the current car index
+            currentCar++;
+    
+            // If we've reached the end, loop back to the first car
+            if (currentCar > 4) {
+                currentCar = 1;
+            }
+    
+            // Show the next car
+            switch (currentCar) {
+                case 1:
+                    imgCar1.style.display = "block";
+                    break;
+                case 2:
+                    imgCar2.style.display = "block";
+                    break;
+                case 3:
+                    imgCar3.style.display = "block";
+                    break;
+                case 4:
+                    imgCar4.style.display = "block";
+                    break;
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+    </script>
+    
+</body>
+
+</html>
